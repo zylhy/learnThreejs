@@ -1,6 +1,10 @@
 <template>
-  <div class="canvasContainer" @click="addLine">
+  <div class="canvasContainer">
     <canvas id="canvas"></canvas>
+  </div>
+  <div class="btnWrap">
+    <button @click="addCube">增加</button>
+    <button @click="remove">移除</button>
   </div>
 </template>
 <script setup>
@@ -8,29 +12,42 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 const THREEScene = ref(null);
-
+ 
 //创建线条
 const addLine = () => {
   const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  // 创建一个空的点数组
   const points = [];
+  // 将第一个点添加到数组中
   points.push(new THREE.Vector3(-1, 0, 0));
+  // 将第二个点添加到数组中
   points.push(new THREE.Vector3(0, 1, 0));
+  // 将第三个点添加到数组中
   points.push(new THREE.Vector3(1, 0, 0));
+  // 使用点数组创建一个缓冲几何体
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  // 使用缓冲几何体和材质创建一个线段
   const line = new THREE.Line(geometry, material);
+  line.name = "line";
+  // 将线段添加到场景中
   THREEScene.value.add(line);
 };
 //  增加立方体
 const addCube = () => {
-  console.log("THREE", THREEScene);
-
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(0, 0, 5);
+  cube.name = 'cube'
   THREEScene.value.add(cube);
 };
-
+//移除
+const remove = () => {
+  const cube = THREEScene.value.children.find((n) => n.name === "cube");
+  if (cube) {
+    THREEScene.value.remove(cube);
+  }
+};
 const initThree = () => {
   // 创建场景
   const scene = new THREE.Scene();
@@ -76,6 +93,7 @@ const initThree = () => {
         o.receiveShadow = true;
       }
     });
+    model.name='klee'
     scene.add(model);
   });
   //   创建地板
@@ -103,6 +121,11 @@ const initThree = () => {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
       camera.updateProjectionMatrix();
+    }
+
+  let klee= THREEScene.value.children.find(n=>n.name=='klee')
+     if(klee){
+      klee.rotation.y+=0.01
     }
     requestAnimationFrame(animate);
     controls.update();
@@ -133,5 +156,15 @@ onMounted(() => {
 .canvasContainer {
   width: 100%;
   height: 100%;
+}
+
+.btnWrap {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  button {
+    width: 50px;
+    margin-right: 10px;
+  }
 }
 </style>
