@@ -1,5 +1,5 @@
 <template>
-  <div class="canvasContainer" @click="addCube">
+  <div class="canvasContainer" @click="addLine">
     <canvas id="canvas"></canvas>
   </div>
 </template>
@@ -8,6 +8,18 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 const THREEScene = ref(null);
+
+//创建线条
+const addLine = () => {
+  const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  const points = [];
+  points.push(new THREE.Vector3(-1, 0, 0));
+  points.push(new THREE.Vector3(0, 1, 0));
+  points.push(new THREE.Vector3(1, 0, 0));
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const line = new THREE.Line(geometry, material);
+  THREEScene.value.add(line);
+};
 //  增加立方体
 const addCube = () => {
   console.log("THREE", THREEScene);
