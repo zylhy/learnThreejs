@@ -1,5 +1,5 @@
 <template>
-  <div class="canvasContainer">
+  <div class="canvasContainer" @click="addCube">
     <canvas id="canvas"></canvas>
   </div>
 </template>
@@ -7,16 +7,22 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+const THREEScene = ref(null);
+//  增加立方体
+const addCube = () => {
+  console.log("THREE", THREEScene);
 
-const dirLightPosition = reactive({
-  x: 0,
-  y: 0,
-  z: 0,
-});
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  const cube = new THREE.Mesh(geometry, material);
+  cube.position.set(0, 0, 5);
+  THREEScene.value.add(cube);
+};
 
 const initThree = () => {
   // 创建场景
   const scene = new THREE.Scene();
+  THREEScene.value = scene;
   scene.background = new THREE.Color("#eee");
 
   // 创建相机
@@ -39,7 +45,6 @@ const initThree = () => {
   controls.enableDamping = true;
   const gltfLoader = new GLTFLoader();
   gltfLoader.load("/klee_genshin_impact/scene.gltf", (gltf) => {
-    console.log(gltf);
     let model = gltf.scene;
     model.traverse((o) => {
       //将图片作为纹理加载
@@ -92,7 +97,6 @@ const initThree = () => {
     // 移动光源
     dirLight.position.x = Math.sin(Date.now() * 0.001) * 1000;
     dirLight.position.z = Math.cos(Date.now() * 0.001) * 1000;
-    
   }
   animate();
 };
