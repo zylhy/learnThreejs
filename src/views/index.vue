@@ -11,8 +11,11 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { GlitchPass } from "three/examples/jsm/postprocessing/GlitchPass.js";
 const THREEScene = ref(null);
- 
+
 //创建线条
 const addLine = () => {
   const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
@@ -38,7 +41,7 @@ const addCube = () => {
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
   const cube = new THREE.Mesh(geometry, material);
   cube.position.set(0, 0, 5);
-  cube.name = 'cube'
+  cube.name = "cube";
   THREEScene.value.add(cube);
 };
 //移除
@@ -68,6 +71,9 @@ const initThree = () => {
   canvas.height = window.innerHeight;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.shadowMap.enabled = true;
+  // 创建合成器
+  const composer = new EffectComposer(renderer);
+
   //   创建控制器
   const controls = new OrbitControls(camera, renderer.domElement);
   //   增加阻尼感
@@ -93,7 +99,7 @@ const initThree = () => {
         o.receiveShadow = true;
       }
     });
-    model.name='klee'
+    model.name = "klee";
     scene.add(model);
   });
   //   创建地板
@@ -115,17 +121,27 @@ const initThree = () => {
   const hemLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
   hemLight.position.set(0, 48, 0);
   scene.add(hemLight);
+  // 渲染 passes 添加渲染 passes  RenderPass通常位于过程链的开始，以便将渲染好的场景作为输入来提供给下一个后期处理步骤。 
+ const renderPass = new RenderPass(scene, camera);
+  composer.addPass(renderPass);
+  // 添加一个 glitch passes
+  const glitchPass = new GlitchPass();
+  // 渲染 passes 添加 glitch passes
+  composer.addPass(glitchPass);
+  // 刷新屏幕 
   function animate() {
-    renderer.render(scene, camera);
+    // renderer.render(scene, camera);
+
+    composer.render();
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
       camera.updateProjectionMatrix();
     }
 
-  let klee= THREEScene.value.children.find(n=>n.name=='klee')
-     if(klee){
-      klee.rotation.y+=0.01
+    let klee = THREEScene.value.children.find((n) => n.name == "klee");
+    if (klee) {
+      klee.rotation.y += 0.01;
     }
     requestAnimationFrame(animate);
     controls.update();
