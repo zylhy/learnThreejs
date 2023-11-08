@@ -72,7 +72,7 @@ const initThree = () => {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.shadowMap.enabled = true;
   // 创建合成器
-  const composer = new EffectComposer(renderer);
+  // const composer = new EffectComposer(renderer);
 
   //   创建控制器
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -80,6 +80,7 @@ const initThree = () => {
   controls.enableDamping = true;
   const gltfLoader = new GLTFLoader();
   gltfLoader.load("/klee_genshin_impact/scene.gltf", (gltf) => {
+    console.log(gltf);
     let model = gltf.scene;
     model.traverse((o) => {
       //将图片作为纹理加载
@@ -121,18 +122,18 @@ const initThree = () => {
   const hemLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
   hemLight.position.set(0, 48, 0);
   scene.add(hemLight);
-  // 渲染 passes 添加渲染 passes  RenderPass通常位于过程链的开始，以便将渲染好的场景作为输入来提供给下一个后期处理步骤。 
- const renderPass = new RenderPass(scene, camera);
-  composer.addPass(renderPass);
-  // 添加一个 glitch passes
-  const glitchPass = new GlitchPass();
-  // 渲染 passes 添加 glitch passes
-  composer.addPass(glitchPass);
-  // 刷新屏幕 
+  // 渲染 passes 添加渲染 passes  RenderPass通常位于过程链的开始，以便将渲染好的场景作为输入来提供给下一个后期处理步骤。
+  // const renderPass = new RenderPass(scene, camera);
+  // composer.addPass(renderPass);
+  // // 添加一个 glitch passes
+  // const glitchPass = new GlitchPass();
+  // // 渲染 passes 添加 glitch passes
+  // composer.addPass(glitchPass);
+  // 刷新屏幕
   function animate() {
-    // renderer.render(scene, camera);
+    renderer.render(scene, camera);
 
-    composer.render();
+    // composer.render();
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -164,6 +165,7 @@ const resizeRendererToDisplaySize = (renderer) => {
   }
   return needResize;
 };
+
 onMounted(() => {
   initThree();
 });
