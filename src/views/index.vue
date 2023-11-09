@@ -14,7 +14,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { GlitchPass } from "three/examples/jsm/postprocessing/GlitchPass.js";
+import {gsap} from 'gsap';
 const THREEScene = ref(null);
+const klee = ref(null);
 
 //创建线条
 const addLine = () => {
@@ -37,6 +39,9 @@ const addLine = () => {
 };
 //  增加立方体
 const addCube = () => {
+  klee.value
+  gsap.to(klee.value.position, {x: 5, repeat: -1,yoyo:true,duration:3, ease: "linear"})
+  return
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
   const cube = new THREE.Mesh(geometry, material);
@@ -80,7 +85,6 @@ const initThree = () => {
   controls.enableDamping = true;
   const gltfLoader = new GLTFLoader();
   gltfLoader.load("/klee_genshin_impact/scene.gltf", (gltf) => {
-    console.log(gltf);
     let model = gltf.scene;
     model.traverse((o) => {
       //将图片作为纹理加载
@@ -101,6 +105,7 @@ const initThree = () => {
       }
     });
     model.name = "klee";
+    klee.value = model
     scene.add(model);
   });
   //   创建地板
@@ -168,6 +173,8 @@ const resizeRendererToDisplaySize = (renderer) => {
 
 onMounted(() => {
   initThree();
+
+  
 });
 </script>
 <style lang="scss" scoped>
