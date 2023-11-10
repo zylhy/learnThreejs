@@ -37,10 +37,10 @@ const addLine = () => {
   // 将线段添加到场景中
   THREEScene.value.add(line);
 };
+
 //  增加立方体
 const addCube = () => {
-  klee.value
-  gsap.to(klee.value.position, {x: 5, repeat: -1,yoyo:true,duration:3, ease: "linear"})
+  gsap.to(klee.value.position, {x: 5, repeat: -1,yoyo:true,duration:3, ease: "power"})
   return
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -83,6 +83,11 @@ const initThree = () => {
   const controls = new OrbitControls(camera, renderer.domElement);
   //   增加阻尼感
   controls.enableDamping = true;
+// 显示坐标系
+const axesHelper = new THREE.AxesHelper( 1000 );
+axesHelper.position.set(0,0,0);
+scene.add( axesHelper );
+
   const gltfLoader = new GLTFLoader();
   gltfLoader.load("/klee_genshin_impact/scene.gltf", (gltf) => {
     let model = gltf.scene;
